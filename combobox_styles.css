@@ -1,0 +1,60 @@
+/* Combobox / Searchable Dropdown Trigger */
+.dropdown-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.dropdown-trigger-input {
+    width: 100%;
+    padding: 12px 40px 12px 16px;
+    /* Space for arrow */
+    border: 2px solid #EEEEEE;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: 'Outfit', sans-serif;
+    background-color: #FAFAFA;
+    color: var(--text-dark);
+    transition: all 0.3s ease;
+    cursor: text;
+}
+
+.dropdown-trigger-input:focus {
+    background-color: #fff;
+    border-color: var(--primary-blue);
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.1);
+}
+
+.dropdown-trigger-input::placeholder {
+    color: #999;
+    font-weight: 500;
+}
+
+/* Arrow Icon positioning */
+.dropdown-input-wrapper .arrow-icon {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-grey);
+    pointer-events: none;
+    /* Let clicks pass to input */
+    transition: transform 0.3s ease;
+    font-size: 0.8rem;
+}
+
+/* Rotate arrow when active/focused */
+.dropdown-input-wrapper:focus-within .arrow-icon {
+    transform: translateY(-50%) rotate(180deg);
+    color: var(--primary-blue);
+}
+
+/* Adjust Dropdown Menu Position for wrapper */
+.custom-dropdown .dropdown-menu {
+    /* Top set previously, ensuring z-index is correct */
+    z-index: 1005;
+}
+
+/* Hide old trigger styles if unused, or keep for other specific dropdowns? 
+   The score modal still uses the old structure? 
+   Let's keep .dropdown-trigger for now just in case. */
