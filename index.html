@@ -1,0 +1,764 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rasionalisasi UTBK</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css?v=5">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="user-info">
+                <div class="avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div class="greeting">
+                    <span class="sub-text"><span data-i18n="header-welcome">Halo,</span> <span
+                            id="greeting-name">Pejuang PTN</span>!</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="theme-toggle-btn" id="theme-toggle">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <button class="notif-btn" onclick="showNotification()">
+                    <i class="fa-regular fa-bell"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Home Section -->
+        <div id="home-section" class="page-section active">
+            <!-- Main Banner -->
+            <div class="banner">
+                <div class="banner-content">
+                    <h2 data-i18n="hero-title">Menuju UTBK 2026</h2>
+                    <div class="countdown" id="countdown">
+                        Loading...
+                    </div>
+                    <p style="margin-top: 8px; font-size: 0.75rem; opacity: 0.9;">21 April 2026</p>
+                </div>
+                <div class="banner-icon">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon orange">
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="avg-score">0</span>
+                        <span class="stat-label" data-i18n="stat-avg-score">Rata-rata Skor</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="total-tryouts">0</span>
+                        <span class="stat-label" data-i18n="stat-total-to">Total Tryout</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Facts Section -->
+            <div class="snbt-facts-banner">
+                <div class="facts-header">
+                    <h3 data-i18n="facts-title">Fakta SNBT</h3>
+                    <p data-i18n="facts-subtitle">Berdasarkan Data Seleksi Nasional (SNBT) 2025</p>
+                </div>
+                <div class="facts-grid">
+                    <div class="fact-card blue">
+                        <div class="fact-icon-wrapper">
+                            <i class="fa-solid fa-user-group"></i>
+                        </div>
+                        <div class="fact-info">
+                            <span class="fact-value">860.976</span>
+                            <span class="fact-label" data-i18n="fact-registrants">pendaftar</span>
+                        </div>
+                    </div>
+                    <div class="fact-card green">
+                        <div class="fact-icon-wrapper">
+                            <i class="fa-solid fa-arrow-up-right-dots"></i>
+                        </div>
+                        <div class="fact-info">
+                            <span class="fact-value">253.421</span>
+                            <span class="fact-label" data-i18n="fact-passed">lolos SNBT</span>
+                        </div>
+                    </div>
+                    <div class="fact-card orange">
+                        <div class="fact-icon-wrapper">
+                            <i class="fa-solid fa-percent"></i>
+                        </div>
+                        <div class="fact-info">
+                            <span class="fact-value">29,43%</span>
+                            <span class="fact-label" data-i18n="fact-chance">peluang SNBT</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Section -->
+            <div class="section-header">
+                <h3 data-i18n="section-stats">Grafik Perkembangan</h3>
+            </div>
+            <div class="chart-container">
+                <canvas id="scoreChart"></canvas>
+            </div>
+
+
+
+            <!-- Recent Scores -->
+            <div class="section-header">
+                <h3 data-i18n="history">Riwayat Tryout</h3>
+                <button class="add-btn" onclick="openModal()">
+                    <i class="fa-solid fa-plus"></i> <span data-i18n="btn-add-score">Tambah</span>
+                </button>
+            </div>
+
+            <div class="score-list" id="score-list">
+                <!-- Score items will be injected here -->
+                <div class="empty-state">
+                    <p data-i18n="empty-scores">Belum ada data tryout.</p>
+                </div>
+            </div>
+            <div id="history-pagination" class="pagination"></div>
+        </div>
+
+        <!-- Schedule Section -->
+        <div id="schedule-section" class="page-section" style="display: none;">
+            <div class="section-header-top">
+                <div class="section-title">
+                    <h2 data-i18n="nav-schedule">Jadwal & Kalender</h2>
+                    <p style="font-size: 0.8rem; color: var(--text-grey);" data-i18n="schedule-subtitle">Pantau agenda
+                        persiapanmu</p>
+                </div>
+                <div class="header-actions">
+                    <button class="theme-toggle-btn" onclick="toggleTheme()">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+                    <button class="notif-btn" onclick="showNotification()">
+                        <i class="fa-regular fa-bell"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="calendar-wrapper">
+                <div class="calendar-header">
+                    <h2 id="current-month">Agustus 2025</h2>
+                    <div class="calendar-nav">
+                        <button onclick="changeMonth(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button onclick="changeMonth(1)"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                <!-- Day Names -->
+                <div class="calendar-grid days-header">
+                    <span data-i18n="day-mon">Sen</span>
+                    <span data-i18n="day-tue">Sel</span>
+                    <span data-i18n="day-wed">Rab</span>
+                    <span data-i18n="day-thu">Kam</span>
+                    <span data-i18n="day-fri">Jum</span>
+                    <span data-i18n="day-sat">Sab</span>
+                    <span data-i18n="day-sun">Min</span>
+                </div>
+                <!-- Dates -->
+                <div class="calendar-grid" id="calendar-dates">
+                    <!-- Dates injected by JS -->
+                </div>
+            </div>
+
+            <div class="section-header" style="margin-top: 24px;">
+                <h3 data-i18n="section-detail">Detail Kegiatan</h3>
+            </div>
+            <div class="schedule-list" id="schedule-list">
+                <!-- Schedule items will be injected here -->
+            </div>
+            <!-- Pagination Controls -->
+            <div id="pagination-controls" class="pagination"></div>
+        </div>
+
+        <!-- Edit Profile Page Section -->
+        <div id="edit-profile-section" class="page-section" style="display: none;">
+            <div class="section-header">
+                <div class="back-nav" onclick="switchTab('profile')">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span data-i18n="btn-back">Kembali</span>
+                </div>
+                <h2 data-i18n="profile-edit">Edit Profile</h2>
+                <div style="width: 40px;"></div> <!-- Spacer -->
+            </div>
+
+            <div class="edit-profile-container">
+                <div class="edit-avatar-container">
+                    <div class="profile-avatar big">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                </div>
+
+                <form id="edit-profile-page-form" class="premium-form" onsubmit="saveProfileChanges(event)">
+                    <div class="form-group-premium">
+                        <label for="p-edit-name" data-i18n="label-name">Nama Lengkap</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="p-edit-name" placeholder="Jane Cooper" required>
+                            <i class="fa-solid fa-pen-to-square input-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group-premium">
+                        <label for="p-edit-nickname" data-i18n="label-nickname">Nama Panggilan</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="p-edit-nickname" placeholder="Pejuang PTN" required>
+                            <i class="fa-solid fa-pen-to-square input-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group-premium">
+                        <label for="p-edit-email" data-i18n="label-email">Email</label>
+                        <div class="input-wrapper">
+                            <input type="email" id="p-edit-email" placeholder="pejuang@dreamptn.id" required>
+                            <i class="fa-regular fa-envelope input-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group-premium">
+                        <label for="p-edit-phone" data-i18n="label-phone">Nomor Handphone</label>
+                        <div class="input-wrapper">
+                            <input type="tel" id="p-edit-phone" placeholder="+62 " required>
+                            <i class="fa-solid fa-phone input-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="edit-profile-actions">
+                        <button type="button" class="btn-premium-discard" onclick="switchTab('profile')"
+                            data-i18n="btn-discard">Discard</button>
+                        <button type="submit" class="btn-premium-save" data-i18n="btn-save">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <!-- FAQ Section (Fullscreen) -->
+        <div id="faq-section" class="page-section" style="display: none;">
+            <div class="section-header-top">
+                <div class="back-nav" onclick="switchTab('profile')">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span data-i18n="btn-back">Kembali</span>
+                </div>
+                <div class="header-actions">
+                    <button class="theme-toggle-btn" onclick="toggleTheme()">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="faq-page-content">
+                <div class="faq-page-header">
+                    <div class="faq-page-icon">
+                        <i class="fa-solid fa-circle-question"></i>
+                    </div>
+                    <h2 data-i18n="help-center">Pusat Bantuan</h2>
+                    <p data-i18n="faq-subtitle">Temukan jawaban untuk kendala kamu</p>
+                </div>
+
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <div class="faq-question"><span data-i18n="faq-q1">Apa itu Rasionalisasi UTBK?</span> <i
+                                class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer" data-i18n="faq-a1">Rasionalisasi UTBK adalah sistem untuk memprediksi
+                            peluang kelulusan
+                            kamu di PTN berdasarkan skor tryout dibandingkan dengan keketatan dan daya tampung jurusan.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question"><span data-i18n="faq-q2">Bagaimana cara membaca peluang?</span> <i
+                                class="fa-solid fa-chevron-down"></i></div>
+                        <div class="faq-answer" data-i18n="faq-a2">Status terbagi menjadi "Skor tidak mencukupi" and
+                            "Skor mencukupi". Jika
+                            status kamu adalah "Skor mencukupi", maka kamu dinyatakan berpeluang untuk lulus.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question"><span data-i18n="faq-q3">Apakah data PTN selalu update?</span> <i
+                                class="fa-solid fa-chevron-down"></i></div>
+                        <div class="faq-answer" data-i18n="faq-a3">Ya, kami memperbarui data PTN sesuai dengan informasi
+                            resmi dari panitia
+                            seleksi nasional untuk tahun 2025/2026.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question"><span data-i18n="faq-q4">Bagaimana jika skor saya turun?</span> <i
+                                class="fa-solid fa-chevron-down"></i></div>
+                        <div class="faq-answer" data-i18n="faq-a4">Jangan khawatir! Turunnya skor adalah bagian dari
+                            proses belajar.
+                            Gunakan grafik perkembangan untuk memantau tren jangka panjang kamu.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question"><span data-i18n="faq-q5">Apakah hasil Rasionalisasi SNBT ini sama
+                                dengan hasil SNBT sebenarnya?</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <ul style="padding-left: 20px; list-style-type: disc;">
+                                <li style="margin-bottom: 8px;" data-i18n="faq-a5-1">Hasil Rasionalisasi SNBT ini
+                                    berdasarkan metode
+                                    penghitungan skor internal untuk memberi gambaran potensi daya saing dan bukan hasil
+                                    akhir SNBT sebenarnya.</li>
+                                <li data-i18n="faq-a5-2">Hasil Rasionalisasi dapat dijadikan alternatif referensi, namun
+                                    bukan untuk
+                                    dijadikan acuan utama dalam menentukan target program studi & PTN di SNBT.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question"><span data-i18n="faq-q6">Kenapa ada beberapa prodi yang statusnya
+                                "Belum ada data" atau "Tidak
+                                bisa diprediksi"?</span> <i class="fa-solid fa-chevron-down"></i></div>
+                        <div class="faq-answer" data-i18n="faq-a6">
+                            Hal ini dikarenakan data pendukung atau perubahan kuota resmi pada program studi tersebut
+                            masih dalam tahap verifikasi dan pengolahan oleh tim kami. Kami memprioritaskan akurasi
+                            data, sehingga prediksi akan dimunculkan segera setelah proses validasi selesai.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question"><span data-i18n="faq-q7">Jika saya ada kendala/error saat mengakses
+                                Rasionalisasi UTBK, saya
+                                harus hubungi siapa?</span> <i class="fa-solid fa-chevron-down"></i></div>
+                        <div class="faq-answer">
+                            <span data-i18n="faq-a7">Jika ada kendala/error, kamu bisa bertanya melalui WhatsApp di
+                                link:</span> <br>
+                            <a href="https://wa.me/6285162782509" target="_blank"
+                                style="color: var(--primary-blue); font-weight: 600; text-decoration: none;">https://wa.me/6285162782509</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="ptn-section" class="page-section" style="display: none;">
+            <div class="section-header-top">
+                <div class="section-title">
+                    <h2 data-i18n="nav-ptn">Ranking Kampus</h2>
+                    <p style="font-size: 0.8rem; color: var(--text-grey);" data-i18n="ptn-subtitle">Cek daya tampung &
+                        keketatan</p>
+                </div>
+                <div class="header-actions">
+                    <button class="theme-toggle-btn" onclick="toggleTheme()">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+                    <button class="notif-btn" onclick="showNotification()">
+                        <i class="fa-regular fa-bell"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- PTN Slider Widget -->
+            <div class="ptn-slider-widget">
+                <div class="ptn-widget-header">
+                    <h3 data-i18n="section-target">Kampus impianmu</h3>
+                    <div class="ptn-header-score">
+                        <span class="label" data-i18n="stat-avg-score">Rata-rata Skor:</span>
+                        <span class="value" id="ptn-avg-score">0</span>
+                    </div>
+                </div>
+
+                <div class="ptn-slider-container">
+                    <div class="ptn-cards-wrapper" id="ptn-cards-wrapper">
+                        <!-- Cards injected by JS -->
+                    </div>
+                </div>
+
+                <div class="slider-controls">
+                    <div class="slider-dots" id="slider-dots">
+                        <!-- Dots injected by JS -->
+                    </div>
+                    <div class="slider-arrows">
+                        <button onclick="scrollSlider(-1)"><i class="fa-solid fa-arrow-left"></i></button>
+                        <button onclick="scrollSlider(1)"><i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommendation Widget -->
+            <div id="recommendation-widget" class="recommendation-widget" style="display: none;">
+                <div class="rec-header">
+                    <i class="fa-solid fa-lightbulb"></i>
+                    <h3 data-i18n="rec-title">Rekomendasi Strategi</h3>
+                </div>
+                <div class="rec-content">
+                    <p id="rec-summary" data-i18n="rec-analyzing">Rekomendasi urutan pilihan kampus berdasarkan tingkat
+                        ketercapaian skor dan daya tampung dan ketetatan</p>
+                    <div id="rec-list" class="rec-list">
+                        <!-- Recommendations injected here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-header" style="margin-top: 24px;">
+                <h3 data-i18n="ranking-title">Ranking PTN Indonesia</h3>
+                <span style="font-size: 0.7rem; color: #888;" data-i18n="ranking-source">Sumber: Webometrics & SNBT
+                    2024</span>
+            </div>
+
+            <div class="toggle-container">
+                <button class="toggle-btn active" id="btn-top-ptn" onclick="switchRankingMode('ptn')"
+                    data-i18n="nav-ptn">Kampus</button>
+                <button class="toggle-btn" id="btn-top-prodi" onclick="switchRankingMode('prodi')"
+                    data-i18n="toggle-prodi">Prodi</button>
+            </div>
+
+            <div class="ptn-search-container">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="ptn-search-input" placeholder="Cari kampus favoritmu..."
+                    data-i18n="search-placeholder">
+            </div>
+
+            <div class="top-ptn-list" id="top-ptn-list">
+                <!-- List injected by JS -->
+            </div>
+        </div>
+
+        <!-- Profile Section -->
+        <div id="profile-section" class="page-section" style="display: none;">
+            <div class="section-header-top">
+                <h2 data-i18n="profile-title">Profil</h2>
+                <div class="header-actions">
+                    <button class="theme-toggle-btn" onclick="toggleTheme()">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+                    <button class="notif-btn" onclick="showNotification()">
+                        <i class="fa-regular fa-bell"></i>
+                    </button>
+                </div>
+            </div>
+
+
+            <div class="profile-container">
+                <!-- User Profile Card -->
+                <div class="settings-user-card" onclick="openEditProfilePage()">
+                    <div class="user-card-info">
+                        <div class="avatar-wrapper">
+                            <div class="profile-avatar">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                        </div>
+                        <div class="user-details">
+                            <h3 id="display-name">Pejuang UTBK 2026</h3>
+                            <p id="display-email">pejuang@dreamptn.id</p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right arrow"></i>
+                </div>
+
+                <!-- Stats Summary Section -->
+                <div class="profile-stats-summary">
+                    <div class="p-stat-item">
+                        <span class="p-stat-value" id="p-last-score">0</span>
+                        <span class="p-stat-label" data-i18n="stat-last-score">Skor Terakhir</span>
+                    </div>
+                    <div class="p-stat-item">
+                        <span class="p-stat-value" id="p-total-to">0</span>
+                        <span class="p-stat-label" data-i18n="stat-total-to">Total Tryout</span>
+                    </div>
+                    <div class="p-stat-item">
+                        <span class="p-stat-value" id="p-avg-score">0</span>
+                        <span class="p-stat-label" data-i18n="stat-avg-score">Rata-rata</span>
+                    </div>
+                </div>
+
+                <h4 class="settings-group-title" data-i18n="other-settings">Other Settings</h4>
+
+                <div class="settings-group">
+                    <div class="settings-item" onclick="openEditProfilePage()">
+                        <div class="settings-icon"><i class="fa-regular fa-user"></i></div>
+                        <span data-i18n="profile-details">Profile Details</span>
+                        <i class="fa-solid fa-chevron-right arrow"></i>
+                    </div>
+
+                    <div class="settings-item" onclick="showNotification()">
+                        <div class="settings-icon"><i class="fa-regular fa-bell"></i></div>
+                        <span data-i18n="notifications">Notifications</span>
+                        <i class="fa-solid fa-chevron-right arrow"></i>
+                    </div>
+                    <div class="settings-item no-arrow">
+                        <div class="settings-icon"><i class="fa-regular fa-moon"></i></div>
+                        <span data-i18n="dark-mode">Dark Mode</span>
+                        <label class="switch">
+                            <input type="checkbox" id="profile-dark-mode-toggle" onchange="toggleTheme()">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <div class="settings-item" onclick="switchTab('faq')">
+                        <div class="settings-icon"><i class="fa-regular fa-message"></i></div>
+                        <span data-i18n="help-center">Support / FAQ</span>
+                        <i class="fa-solid fa-chevron-right arrow"></i>
+                    </div>
+                    <div class="settings-item" onclick="openLanguageModal()">
+                        <div class="settings-icon"><i class="fa-solid fa-globe"></i></div>
+                        <span data-i18n="language">Bahasa</span>
+                        <div class="settings-trailing">
+                            <img src="https://flagcdn.com/w20/id.png" width="20" alt="ID" id="current-lang-flag">
+                            <i class="fa-solid fa-chevron-right arrow"></i>
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+
+        <!-- Edit PTN Modal (New with Dropdowns) -->
+        <div id="ptnModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closePtnModal()">&times;</span>
+                <h2 data-i18n="modal-ptn-title">Pilih Universitas & Jurusan</h2>
+                <form id="ptnForm">
+                    <!-- University Dropdown -->
+                    <div class="form-group">
+                        <label for="ptn-uni-select" style="display:flex; align-items:center; gap:8px;">
+                            <img src="https://img.icons8.com/color/48/university.png" width="20" alt="Uni"> <span
+                                data-i18n="label-uni">Universitas</span>
+                        </label>
+                        <div class="custom-dropdown" id="ptn-uni-dropdown">
+                            <div class="dropdown-input-wrapper">
+                                <input type="text" id="ptn-uni-input" class="dropdown-trigger-input"
+                                    placeholder="Cari Universitas/Sekolah Vokasi" autocomplete="off"
+                                    data-i18n="placeholder-uni">
+                                <i class="fa-solid fa-chevron-down arrow-icon"></i>
+                            </div>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-options" id="ptn-uni-options">
+                                    <!-- Options injected by JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Major Dropdown -->
+                    <div class="form-group">
+                        <label for="ptn-major-select" style="display:flex; align-items:center; gap:8px;">
+                            <img src="https://img.icons8.com/color/48/books.png" width="20" alt="Major"> <span
+                                data-i18n="label-major">Pilih Jurusan</span>
+                        </label>
+                        <div class="custom-dropdown" id="ptn-major-dropdown">
+                            <div class="dropdown-input-wrapper">
+                                <input type="text" id="ptn-major-input" class="dropdown-trigger-input"
+                                    placeholder="Cari Jurusan" autocomplete="off" data-i18n="placeholder-major">
+                                <i class="fa-solid fa-chevron-down arrow-icon"></i>
+                            </div>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-options" id="ptn-major-options">
+                                    <!-- Options injected by JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-btn-group">
+                        <button type="button" class="btn-outline" onclick="closePtnModal()"
+                            data-i18n="btn-back">Kembali</button>
+                        <button type="button" class="btn-primary" onclick="handlePtnSave()"
+                            data-i18n="btn-save-short">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Copyright Footer -->
+        <footer id="app-copyright" class="app-footer">
+            Copyright &copy; 2026 Maulidi Zikri Nur
+        </footer>
+
+        <!-- Navbar -->
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item active" onclick="switchTab('home')">
+                <i class="fa-solid fa-house"></i>
+                <span data-i18n="nav-home">Home</span>
+            </a>
+            <a href="#" class="nav-item" onclick="switchTab('ptn')">
+                <i class="fa-solid fa-building-columns"></i>
+                <span data-i18n="nav-ptn">Kampus</span>
+            </a>
+
+            <!-- Quick Add Button -->
+            <button class="nav-add-btn" onclick="toggleScoreModal()">
+                <i class="fa-solid fa-plus"></i>
+            </button>
+
+            <a href="#" class="nav-item" onclick="switchTab('schedule')">
+                <i class="fa-regular fa-calendar-check"></i>
+                <span data-i18n="nav-schedule">Jadwal</span>
+            </a>
+
+            <a href="#" class="nav-item" id="nav-profile" onclick="switchTab('profile')">
+                <i class="fa-solid fa-user"></i>
+                <span data-i18n="nav-profile">Profil</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Notification Modal -->
+    <div id="notifModal" class="modal">
+        <div class="modal-content notif-modal-content">
+            <span class="close" onclick="closeNotifModal()">&times;</span>
+            <div id="notif-body">
+                <!-- Content injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Form -->
+    <div id="scoreModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 data-i18n="modal-title-add">Input Nilai Tryout</h2>
+            <form id="scoreForm">
+                <div class="form-group">
+                    <label for="to-name" data-i18n="label-to-name">Nama Tryout</label>
+                    <div class="custom-dropdown" id="custom-dropdown">
+                        <div class="dropdown-trigger" id="dropdown-trigger">
+                            <span class="selected-text" data-i18n="placeholder-select-to">Pilih Tryout</span>
+                            <i class="fa-solid fa-chevron-down arrow-icon"></i>
+                        </div>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-search-wrapper">
+                                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                                <input type="text" id="dropdown-search" placeholder="Cari tryout..." autocomplete="off"
+                                    data-i18n="search-to-placeholder">
+                            </div>
+                            <div class="dropdown-options" id="dropdown-options">
+                                <!-- Options injected by JS -->
+                            </div>
+                        </div>
+                        <!-- Hidden input to store value for form submission -->
+                        <input type="hidden" id="to-name" name="to-name" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="to-date" data-i18n="label-date">Tanggal</label>
+                    <input type="date" id="to-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="to-score" data-i18n="label-to-score">Skor Tryout</label>
+                    <input type="number" id="to-score" placeholder="0 - 1000" min="0" max="1000" required>
+                </div>
+                <button type="submit" class="submit-btn" data-i18n="btn-save-short">Simpan</button>
+            </form>
+        </div>
+    </div>
+
+
+
+    <!-- Event Detail Modal -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content event-modal-content">
+            <span class="close" onclick="closeEventModal()">&times;</span>
+            <h2 id="event-modal-title" data-i18n="section-detail">Detail Kegiatan</h2>
+            <div class="event-details-body">
+                <div class="detail-item">
+                    <span class="detail-label" data-i18n="label-to-name">Nama Tryout</span>
+                    <span class="detail-value" id="detail-name">-</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label" data-i18n="label-execution">Pelaksanaan</span>
+                    <span class="detail-value" id="detail-date">-</span>
+                </div>
+                <div class="detail-item" id="item-score">
+                    <span class="detail-label" data-i18n="label-to-score">Nilai Tryout</span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="detail-value" id="detail-score">0</span>
+                        <span id="detail-trend" class="score-trend"></span>
+                    </div>
+                </div>
+                <div class="detail-item" id="item-link">
+                    <span class="detail-label" data-i18n="label-link">Link Pengerjaan</span>
+                    <div id="detail-link-container">
+                        <!-- Link or status text will be injected here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alternative Recommendation Modal -->
+    <div id="altModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAltModal()">&times;</span>
+            <h2 style="margin-bottom: 8px;" data-i18n="label-alt-major">Alternatif Jurusan</h2>
+            <p id="alt-modal-subtitle" style="font-size: 0.9rem; color: #666; margin-bottom: 16px;"></p>
+
+            <div id="alt-list" class="alt-list">
+                <!-- Alternatives injected here -->
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditProfileModal()">&times;</span>
+            <h2 data-i18n="modal-title-edit">Edit Profil</h2>
+            <form id="editProfileForm" onsubmit="saveProfile(event)">
+                <div class="form-group">
+                    <label for="edit-name" data-i18n="label-name">Nama Lengkap</label>
+                    <input type="text" id="edit-name" placeholder="Masukkan nama lengkap" required
+                        data-i18n="placeholder-name">
+                </div>
+                <div class="form-group">
+                    <label for="edit-email" data-i18n="label-email">Email</label>
+                    <input type="email" id="edit-email" placeholder="Masukkan email" required
+                        data-i18n="placeholder-email">
+                </div>
+                <div class="modal-btn-group">
+                    <button type="button" class="btn-outline" onclick="closeEditProfileModal()"
+                        data-i18n="btn-cancel">Batal</button>
+                    <button type="submit" class="btn-primary" data-i18n="btn-save">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Language Modal -->
+    <div id="languageModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeLanguageModal()">&times;</span>
+            <h2 data-i18n="language">Pilih Bahasa</h2>
+            <div class="language-options">
+                <div class="lang-option" onclick="changeLanguage('id')">
+                    <img src="https://flagcdn.com/w40/id.png" alt="ID">
+                    <span data-i18n="id-lang">Indonesian (ID)</span>
+                </div>
+                <div class="lang-option" onclick="changeLanguage('en')">
+                    <img src="https://flagcdn.com/w40/us.png" alt="US">
+                    <span data-i18n="en-lang">English (EN)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="ptn_data.js"></script>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
